@@ -1,0 +1,48 @@
+package com.clown.util;
+
+/**
+ * 
+ * @author Calvin Gene Hall
+ *
+ */
+
+public enum OperatingSystem {
+	LINUX("Linux", -1, -30), WINDOWS8_1("Windows 8.1", -8, -31), UNKNOWN(
+			"Unknown", 0, 0), WINDOWS10("Windows 10", -8, -31);
+	
+	public static OperatingSystem getOperatingSystem() {
+		switch (System.getProperty("os.name")) {
+		case "Linux":
+			return LINUX;
+		case "Windows 8.1":
+			return WINDOWS8_1;
+		default:
+			System.out.println("Unknown OS Detected. "
+					+ System.getProperty("os.name"));
+			return UNKNOWN;
+		}
+	}
+
+	private final String name;
+
+	private final int xDiff, yDiff;
+
+	private OperatingSystem(final String name, final int xDiff, final int yDiff) {
+		this.name = name;
+		this.xDiff = xDiff;
+		this.yDiff = yDiff;
+	}
+
+	public int getXDiff() {
+		return xDiff;
+	}
+
+	public int getYDiff() {
+		return yDiff;
+	}
+
+	@Override
+	public String toString() {
+		return name;
+	}
+}
