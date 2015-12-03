@@ -61,7 +61,7 @@ public final class ThreadPool extends Thread implements Runnable {
 	@Override
 	public void run() {
 		while (true) {
-			// Regular mode (Doesn't do anything)
+			// Regular mode (waits)
 			while (queuedTasks.size() == 0) {
 				synchronized (SINGLETON) {
 					try {

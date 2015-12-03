@@ -13,4 +13,14 @@ public final class Util {
 		}
 		return bytes;
 	}
+	
+	public static boolean isUpperCase(String string) {
+		char[] chars = string.toCharArray();
+		for (char c : chars) {
+			if (Character.isAlphabetic(c) && !Character.isUpperCase(c)) {
+				return false;
+			}
+		}
+		return true;
+	}
 }
