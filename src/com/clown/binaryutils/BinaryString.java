@@ -6,7 +6,7 @@ public final class BinaryString extends BinaryObject<BinaryString> {
 		BinaryObjectFactory.putBuilder(new BinaryString(""));
 	}
 	
-	private String value = "";
+	public String value = ""; // Public so operations can be performed on it like normal.
 	
 	@Override
 	public int getIdentifier() {

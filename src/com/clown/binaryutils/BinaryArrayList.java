@@ -9,7 +9,7 @@ public final class BinaryArrayList<T extends BinaryObject<?>> extends BinaryObje
 		BinaryObjectFactory.putBuilder(new BinaryArrayList<>(null));
 	}
 	
-	private ArrayList<T> arrayList = new ArrayList<T>();
+	public ArrayList<T> arrayList = new ArrayList<T>(); // Public so operations can be performed on it like normal.
 	
 	public BinaryArrayList(ArrayList<T> arrayList) {
 		this.arrayList = arrayList;

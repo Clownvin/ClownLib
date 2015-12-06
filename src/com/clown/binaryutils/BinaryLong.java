@@ -6,7 +6,7 @@ public final class BinaryLong extends BinaryObject<BinaryLong> {
 		BinaryObjectFactory.putBuilder(new BinaryLong(0));
 	}
 	
-	private long value = 0;
+	public long value = 0; // Public so operations can be performed on it like normal.
 	
 	public BinaryLong(long value) {
 		this.value = value;

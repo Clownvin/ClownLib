@@ -6,7 +6,7 @@ public final class BinaryInteger extends BinaryObject<BinaryInteger> {
 		BinaryObjectFactory.putBuilder(new BinaryInteger(0));
 	}
 	
-	private int value = 0;
+	public int value = 0; // Public so operations can be perfomed on it like normal.
 	
 	public BinaryInteger(int value) {
 		this.value = value;

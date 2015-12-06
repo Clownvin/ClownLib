@@ -6,7 +6,7 @@ public final class BinaryFloat extends BinaryObject<BinaryFloat> {
 		BinaryObjectFactory.putBuilder(new BinaryFloat(0.0f));
 	}
 	
-	private float value = 0.0f;
+	public float value = 0.0f; // Public so operations can be performed on it like normal.
 	
 	public BinaryFloat(float value) {
 		this.value = value;

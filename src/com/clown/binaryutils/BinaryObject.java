@@ -30,7 +30,7 @@ public abstract class BinaryObject<T> implements ByteFormatted<BinaryObject<T>> 
 			} catch (BuilderMissingException e) {
 				throw new RuntimeException(e.getMessage());
 			}
-			putMemberTable(identifiers[i], object);
+			setMember(identifiers[i], object);
 		}
 		return (BinaryObject<T>) this.clone();
 	}
@@ -63,8 +63,12 @@ public abstract class BinaryObject<T> implements ByteFormatted<BinaryObject<T>> 
 		return size;
 	}
 	
-	private final void putMemberTable(String identifier, BinaryObject<?> member) {
+	public final void setMember(String identifier, BinaryObject<?> member) {
 		memberTable.put(identifier, member);
+	}
+	
+	public final BinaryObject<?> getMember(String identifier) {
+		return memberTable.get(identifier);
 	}
 	
 	public abstract BinaryObject<T> clone();

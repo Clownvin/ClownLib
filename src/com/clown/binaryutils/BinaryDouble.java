@@ -6,7 +6,7 @@ public final class BinaryDouble extends BinaryObject<BinaryDouble> {
 		BinaryObjectFactory.putBuilder(new BinaryDouble(0.0d));
 	}
 	
-	private double value = 0.0d;
+	public double value = 0.0d; // Public so operations can be performed on it like normal.
 	
 	@Override
 	public int getIdentifier() {
