@@ -546,7 +546,8 @@ public final class BinaryOperations {
 	 * @param thisByte
 	 * @return
 	 */
-	// Slightly unnecessary, now that Java natively supports unsigned conversions.
+	// Slightly unnecessary, now that Java natively supports unsigned
+	// conversions.
 	public static short unsignedByteToShort(byte thisByte) {
 		return (short) (thisByte & 0xFF);
 	}

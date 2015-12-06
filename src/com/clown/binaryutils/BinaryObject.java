@@ -4,17 +4,20 @@ import java.util.Hashtable;
 
 public abstract class BinaryObject<T> implements ByteFormatted<BinaryObject<T>> {
 	protected Hashtable<String, BinaryObject<?>> memberTable = new Hashtable<String, BinaryObject<?>>();
-	
+
+	@Override
+	public abstract BinaryObject<T> clone();
+
 	@Override
 	public BinaryObject<T> fromBytes(byte[] bytes) {
 		int[] types = getTypes();
 		String[] identifiers = getIdentifiers();
 		memberTable.clear();
 		if (types.length != identifiers.length) {
-			throw new RuntimeException("Identifiers length not equal to types length for "+toString()+".");
+			throw new RuntimeException("Identifiers length not equal to types length for " + toString() + ".");
 		}
 		if (BinaryOperations.bytesToInteger(bytes) != getIdentifier()) {
-			throw new RuntimeException("Invalid identifier for type "+toString());
+			throw new RuntimeException("Invalid identifier for type " + toString());
 		}
 		int offset = 4;
 		byte[] block;
@@ -32,9 +35,30 @@ public abstract class BinaryObject<T> implements ByteFormatted<BinaryObject<T>> 
 			}
 			setMember(identifiers[i], object);
 		}
-		return (BinaryObject<T>) this.clone();
+		return this.clone();
 	}
-	
+
+	public abstract String[] getIdentifiers();
+
+	public final BinaryObject<?> getMember(String identifier) {
+		return memberTable.get(identifier);
+	}
+
+	public abstract int[] getTypes();
+
+	public final void setMember(String identifier, BinaryObject<?> member) {
+		memberTable.put(identifier, member);
+	}
+
+	@Override
+	public int sizeOf() {
+		int size = 4; // 4 for identifier
+		for (String key : memberTable.keySet()) {
+			size += 4 + memberTable.get(key).sizeOf();
+		}
+		return size;
+	}
+
 	@Override
 	public byte[] toBytes() {
 		byte[] bytes = new byte[sizeOf()];
@@ -53,27 +77,4 @@ public abstract class BinaryObject<T> implements ByteFormatted<BinaryObject<T>> 
 		}
 		return bytes;
 	}
-	
-	@Override
-	public int sizeOf() {
-		int size = 4; // 4 for identifier
-		for (String key : memberTable.keySet()) {
-			size += 4 + memberTable.get(key).sizeOf();
-		}
-		return size;
-	}
-	
-	public final void setMember(String identifier, BinaryObject<?> member) {
-		memberTable.put(identifier, member);
-	}
-	
-	public final BinaryObject<?> getMember(String identifier) {
-		return memberTable.get(identifier);
-	}
-	
-	public abstract BinaryObject<T> clone();
-	
-	public abstract int[] getTypes();
-	
-	public abstract String[] getIdentifiers();
 }
