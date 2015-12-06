@@ -33,18 +33,24 @@ public final class BinaryString extends BinaryObject<BinaryString> {
 	
 	@Override
 	public BinaryString fromBytes(byte[] bytes) {
-		char[] buffer = new char[BinaryOperations.bytesToInteger(bytes)];
-		System.out.println("Buffer length: "+buffer.length);
-		for (int i = 4; i < 4 + buffer.length; i++) {
-			buffer[i - 4] = (char)bytes[i];
+		int type = BinaryOperations.bytesToInteger(bytes);
+		if (type != getIdentifier()) {
+			throw new RuntimeException("Invalid identifier for type "+toString());
+		}
+		char[] buffer = new char[BinaryOperations.bytesToInteger(bytes, 4)];
+		for (int i = 8; i < 8 + buffer.length; i++) {
+			buffer[i - 8] = (char)bytes[i];
 		}
 		return new BinaryString(String.valueOf(buffer));
 	}
 	
 	@Override
 	public byte[] toBytes() {
-		byte[] bytes = new byte[value.length() + 4];
+		byte[] bytes = new byte[sizeOf()]; // Type + length
 		int idx = 0;
+		for (byte b : BinaryOperations.toBytes(getIdentifier())) {
+			bytes[idx++] = b;
+		}
 		for (byte b : BinaryOperations.toBytes(value.length())) {
 			bytes[idx++] = b;
 		}
@@ -56,7 +62,7 @@ public final class BinaryString extends BinaryObject<BinaryString> {
 	
 	@Override
 	public int sizeOf() {
-		return value.length() + 4;
+		return value.length() + 8;
 	}
 
 	@Override
@@ -78,5 +84,10 @@ public final class BinaryString extends BinaryObject<BinaryString> {
 			return ((BinaryString)other).getString().equals(value);
 		}
 		return false;
+	}
+	
+	@Override
+	public String toString() {
+		return "BinaryString";
 	}
 }

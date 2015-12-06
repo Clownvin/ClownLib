@@ -23,13 +23,23 @@ public final class BinaryFloat extends BinaryObject<BinaryFloat> {
 	
 	@Override
 	public byte[] toBytes() {
-		return BinaryOperations.toBytes(value);
+		byte[] bytes = new byte[sizeOf()];
+		int idx = 0;
+		for (byte b : BinaryOperations.toBytes(getIdentifier())) {
+			bytes[idx++] = b;
+		}
+		for (byte b : BinaryOperations.toBytes(value)) {
+			bytes[idx++] = b;
+		}
+		return bytes;
 	}
 	
 	@Override
 	public BinaryFloat fromBytes(byte[] bytes) {
-		System.out.println(bytes.length);
-		return new BinaryFloat(BinaryOperations.bytesToFloat(bytes));
+		if (BinaryOperations.bytesToInteger(bytes) != getIdentifier()) {
+			throw new RuntimeException("Invalid identifier for type "+toString());
+		}
+		return new BinaryFloat(BinaryOperations.bytesToFloat(bytes, 4));
 	}
 	
 	@Override
@@ -39,7 +49,7 @@ public final class BinaryFloat extends BinaryObject<BinaryFloat> {
 	
 	@Override
 	public int sizeOf() {
-		return 4;
+		return 8;
 	}
 
 	@Override
@@ -66,6 +76,11 @@ public final class BinaryFloat extends BinaryObject<BinaryFloat> {
 			return ((BinaryFloat) other).getFloat() == value;
 		}
 		return false;
+	}
+	
+	@Override
+	public String toString() {
+		return "BinaryFloat";
 	}
 
 }

@@ -33,17 +33,28 @@ public final class BinaryInteger extends BinaryObject<BinaryInteger> {
 	
 	@Override
 	public byte[] toBytes() {
-		return BinaryOperations.toBytes(value);
+		byte[] bytes = new byte[sizeOf()];
+		int idx = 0;
+		for (byte b : BinaryOperations.toBytes(getIdentifier())) {
+			bytes[idx++] = b;
+		}
+		for (byte b : BinaryOperations.toBytes(value)) {
+			bytes[idx++] = b;
+		}
+		return bytes;
 	}
 	
 	@Override
 	public BinaryInteger fromBytes(byte[] bytes) {
-		return new BinaryInteger(BinaryOperations.bytesToInteger(bytes));
+		if (BinaryOperations.bytesToInteger(bytes) != getIdentifier()) {
+			throw new RuntimeException("Invalid identifier for type "+toString());
+		}
+		return new BinaryInteger(BinaryOperations.bytesToInteger(bytes, 4));
 	}
 	
 	@Override
 	public int sizeOf() {
-		return 4;
+		return 8;
 	}
 
 	@Override
@@ -65,5 +76,10 @@ public final class BinaryInteger extends BinaryObject<BinaryInteger> {
 			return ((BinaryInteger)other).getInteger() == value;
 		}
 		return false;
+	}
+	
+	@Override
+	public String toString() {
+		return "BinaryInteger";
 	}
 }

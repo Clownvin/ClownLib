@@ -3,7 +3,7 @@ package com.clown.binaryutils;
 import java.util.Hashtable;
 
 public abstract class BinaryObject<T> implements ByteFormatted<BinaryObject<T>> {
-	protected final Hashtable<String, BinaryObject<?>> memberTable = new Hashtable<String, BinaryObject<?>>();
+	protected Hashtable<String, BinaryObject<?>> memberTable = new Hashtable<String, BinaryObject<?>>();
 	
 	@Override
 	public BinaryObject<T> fromBytes(byte[] bytes) {
@@ -13,7 +13,10 @@ public abstract class BinaryObject<T> implements ByteFormatted<BinaryObject<T>> 
 		if (types.length != identifiers.length) {
 			throw new RuntimeException("Identifiers length not equal to types length for "+toString()+".");
 		}
-		int offset = 0;
+		if (BinaryOperations.bytesToInteger(bytes) != getIdentifier()) {
+			throw new RuntimeException("Invalid identifier for type "+toString());
+		}
+		int offset = 4;
 		byte[] block;
 		for (int i = 0; i < types.length; i++) {
 			block = new byte[BinaryOperations.bytesToInteger(bytes, offset)];
@@ -23,7 +26,7 @@ public abstract class BinaryObject<T> implements ByteFormatted<BinaryObject<T>> 
 			}
 			BinaryObject<?> object;
 			try {
-				object = BinaryObjectFactory.getObject(types[i], block);
+				object = BinaryObjectFactory.getObject(block);
 			} catch (BuilderMissingException e) {
 				throw new RuntimeException(e.getMessage());
 			}
@@ -36,6 +39,9 @@ public abstract class BinaryObject<T> implements ByteFormatted<BinaryObject<T>> 
 	public byte[] toBytes() {
 		byte[] bytes = new byte[sizeOf()];
 		int idx = 0;
+		for (byte b : BinaryOperations.toBytes(getIdentifier())) {
+			bytes[idx++] = b;
+		}
 		for (String key : memberTable.keySet()) {
 			BinaryObject<?> member = memberTable.get(key);
 			for (byte b : BinaryOperations.toBytes(member.sizeOf())) {
@@ -50,7 +56,7 @@ public abstract class BinaryObject<T> implements ByteFormatted<BinaryObject<T>> 
 	
 	@Override
 	public int sizeOf() {
-		int size = 0;
+		int size = 4; // 4 for identifier
 		for (String key : memberTable.keySet()) {
 			size += 4 + memberTable.get(key).sizeOf();
 		}

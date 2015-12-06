@@ -6,7 +6,8 @@ public class BinaryObjectFactory {
 	private static final Hashtable<Integer, BinaryObject<?>> builderTable = new Hashtable<Integer, BinaryObject<?>>();
 	
 	@SuppressWarnings("unchecked")
-	public static <T extends BinaryObject<?>> T getObject(int identifier, byte[] bytes) throws BuilderMissingException {
+	public static <T extends BinaryObject<?>> T getObject(byte[] bytes) throws BuilderMissingException {
+		int identifier = BinaryOperations.bytesToInteger(bytes);
 		if (!builderTable.containsKey(identifier)) {
 			throw new BuilderMissingException("Builder missing for indentifier "+identifier);
 		}

@@ -26,17 +26,18 @@ public final class BinaryArrayList<T extends BinaryObject<?>> extends BinaryObje
 	
 	@Override
 	public BinaryArrayList<T> fromBytes(byte[] bytes) {
-		int bufferSize = BinaryOperations.bytesToInteger(bytes);
+		if (BinaryOperations.bytesToInteger(bytes) != getIdentifier()) {
+			throw new RuntimeException("Invalid identifier for type "+toString());
+		}
+		int bufferSize = BinaryOperations.bytesToInteger(bytes, 4);
 		if (bufferSize == 0) {
 			return new BinaryArrayList<T>(new ArrayList<T>());
 		}
-		int idx = 4;
-		int typeIdentifier = BinaryOperations.bytesToInteger(bytes, idx);
-		idx += 4;
+		int idx = 8;
 		ArrayList<T> newList = new ArrayList<T>();
 		try {
 			for (; idx < bytes.length;) {
-				T object = BinaryObjectFactory.getObject(typeIdentifier, Arrays.copyOfRange(bytes, idx, bytes.length));
+				T object = BinaryObjectFactory.getObject(Arrays.copyOfRange(bytes, idx, bytes.length));
 				newList.add(object);
 				idx += object.sizeOf();
 			}
@@ -49,8 +50,11 @@ public final class BinaryArrayList<T extends BinaryObject<?>> extends BinaryObje
 	@Override
 	public byte[] toBytes() {
 		if (arrayList.size() == 0) {
-			byte[] bytes = new byte[4];
+			byte[] bytes = new byte[8];
 			int idx = 0;
+			for (byte b : BinaryOperations.toBytes(getIdentifier())) {
+				bytes[idx++] = b;
+			}
 			for (byte b : BinaryOperations.toBytes(0)) {
 				bytes[idx++] = b;
 			}
@@ -58,10 +62,10 @@ public final class BinaryArrayList<T extends BinaryObject<?>> extends BinaryObje
 		}
 		byte[] bytes = new byte[sizeOf()];
 		int idx = 0;
-		for (byte b : BinaryOperations.toBytes(bytes.length)) {
+		for (byte b : BinaryOperations.toBytes(getIdentifier())) {
 			bytes[idx++] = b;
 		}
-		for (byte b : BinaryOperations.toBytes(arrayList.get(0).getIdentifier())) {
+		for (byte b : BinaryOperations.toBytes(bytes.length)) {
 			bytes[idx++] = b;
 		}
 		for (int i = 0; i < arrayList.size(); i++) {
@@ -74,7 +78,7 @@ public final class BinaryArrayList<T extends BinaryObject<?>> extends BinaryObje
 	
 	@Override
 	public int sizeOf() {
-		int size = 8; // 4 for length, 4 for type
+		int size = 8; // 4 for arraylist type, 4 for length
 		for (int i = 0; i < arrayList.size(); i++) {
 			size += arrayList.get(i).sizeOf();
 		}
@@ -107,5 +111,10 @@ public final class BinaryArrayList<T extends BinaryObject<?>> extends BinaryObje
 			return ((BinaryArrayList<?>)other).getArrayList().equals(arrayList);
 		}
 		return false;
+	}
+	
+	@Override
+	public String toString() {
+		return "BinaryArrayList";
 	}
 }
