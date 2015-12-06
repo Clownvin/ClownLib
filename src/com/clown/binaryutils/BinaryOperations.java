@@ -1,4 +1,4 @@
-package com.clown.util;
+package com.clown.binaryutils;
 
 import java.math.BigInteger;
 

@@ -1,6 +1,6 @@
 package com.clown.io;
 
-import com.clown.util.ByteFormatted;
+import com.clown.binaryutils.ByteFormatted;
 
 /**
  * 
